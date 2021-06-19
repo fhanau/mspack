@@ -84,10 +84,18 @@ typedef enum {
 int parseCv(XMLElement* cvParam, BinDataType& type, unsigned& precision){
   unsigned char uncompressed = 0;
   while(cvParam){
-    const char* name;
-    cvParam->QueryStringAttribute("name", &name);
-    const char* accession;
-    cvParam->QueryStringAttribute("accession", &accession);
+    const char* name = 0;
+    XMLError error = cvParam->QueryStringAttribute("name", &name);
+    if (error != XML_SUCCESS) {
+      cvParam = cvParam->NextSiblingElement();
+      continue;
+    }
+    const char* accession = 0;
+    error = cvParam->QueryStringAttribute("accession", &accession);
+    if (error != XML_SUCCESS) {
+      cvParam = cvParam->NextSiblingElement();
+      continue;
+    }
     if(strcmp(accession, "MS:1000514") == 0 && strcmp(name, "m/z array") == 0){
       type = MZ;
     }
@@ -252,7 +260,7 @@ int MZMLEncode(const char* input, const char* output, MSOptions& options, unsign
     }
   }
   xml_offset = ftell(error_split);
-  fprintf(stderr, "xml offset: %zu\n", xml_offset);
+  fprintf(stderr, "xml offset: %llu\n", xml_offset);
   if(!options.scans_only){
     XMLPrinter printIO(0, true, 0);
     doc.Accept(&printIO);

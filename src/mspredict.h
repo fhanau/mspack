@@ -21,7 +21,7 @@ static void write_to_vector8(uint64_t val, std::vector<std::vector<unsigned char
   }
 }
 
-static void write_to_vector(uint64_t val, std::vector<std::vector<unsigned char> >& out_vec, unsigned offset, unsigned size){
+__attribute__((unused)) static void write_to_vector(uint64_t val, std::vector<std::vector<unsigned char> >& out_vec, unsigned offset, unsigned size){
   if(size == 4){
     write_to_vector4(val, out_vec, offset);
     return;

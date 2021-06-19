@@ -242,7 +242,7 @@ int MZMLDecode(const char* input, const char* output, unsigned char is_gz){
   fread(&xml_offset, 1, sizeof(xml_offset), fp);
   fseek(fp, 0, SEEK_END);
   uint64_t xml_size = ftell(fp) - xml_offset;
-  fprintf(stderr, "xml_size: %d\n", xml_size);
+  fprintf(stderr, "xml_size: %llu\n", xml_size);
   char* xml_data = (char*)malloc(xml_size);
   fseek(fp, xml_offset, SEEK_SET);
   fread(xml_data, xml_size, 1, fp);
@@ -373,8 +373,11 @@ int MZMLDecode2(XMLElement*& currentSpectrum, unsigned char*& sz_data,
     XMLElement* cvParam = currentSpectrum->FirstChildElement("cvParam");
     int msLevel = -1;
     while(cvParam){
-      const char* name;
-      cvParam->QueryStringAttribute("name", &name);
+      const char* name = 0;
+      XMLError error = cvParam->QueryStringAttribute("name", &name);
+      if (error != XML_SUCCESS) {
+        cvParam = cvParam->NextSiblingElement();
+      }
       if(strcmp(name, "ms level") == 0){
         cvParam->QueryIntAttribute("value", &msLevel);
         break;
@@ -425,8 +428,12 @@ int MZMLDecode2(XMLElement*& currentSpectrum, unsigned char*& sz_data,
         BinDataType type = TBD;
         unsigned precision = 0;
         while(cvParam){
-          const char* name;
-          cvParam->QueryStringAttribute("name", &name);
+          const char* name = 0;
+          XMLError error = cvParam->QueryStringAttribute("name", &name);
+          if (error != XML_SUCCESS) {
+            cvParam = cvParam->NextSiblingElement();
+            continue;
+          }
           if(strcmp(name, "m/z array") == 0){
             type = MZ;
           }
