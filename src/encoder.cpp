@@ -262,9 +262,10 @@ int MZMLEncode(const char* input, const char* output, MSOptions& options, unsign
   xml_offset = ftell(error_split);
   fprintf(stderr, "xml offset: %llu\n", xml_offset);
   if(!options.scans_only){
-    XMLPrinter printIO(0, true, 0);
+    XMLPrinter printIO(error_split, true);
     doc.Accept(&printIO);
-    fwrite(printIO.CStr(), 1, printIO.CStrSize(), error_split);
+    //Needed to help the decoder orient where options are located
+    fputc('\0', error_split);
   }
   rewind(error_split);
   fwrite(&xml_offset, 1, sizeof(xml_offset), error_split);
@@ -793,6 +794,15 @@ for(int i = 0; i < scanCount; i++)
     scan = scan -> NextSiblingElement();
     continue;
   }
+  //Compressed scans are not currently supported.
+  const char* ctype = 0;
+  XMLError error = peaks->QueryStringAttribute("compressionType", &ctype);
+  if (error == XML_SUCCESS) {
+    if (memcmp(ctype, "zlib", 4) == 0) {
+      fprintf(stderr, "Error: File has compressed data arrays (zlib or msnumpress), which are currently not supported. Convert the file to uncompressed arrays and try again.\n");
+      return EXIT_FAILURE;
+    }
+  }
 
   F* append_here_mz, *append_here_int;
   if(msLevel == 1){
@@ -938,9 +948,10 @@ if(options.int_lossy_mode != lossless){
   free(intArrays);
 
   if(!options.scans_only){
-    XMLPrinter printIO(0, true, 0);
+    XMLPrinter printIO(error_split, true);
     doc->Accept(&printIO);
-    fwrite(printIO.CStr(), 1, printIO.CStrSize(), error_split);
+    //Needed to help the decoder orient where options are located
+    fputc('\0', error_split);
   }
 
   fwrite(&options, 1, sizeof(MSOptions), error_split);
