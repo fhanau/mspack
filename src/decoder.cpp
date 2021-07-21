@@ -67,7 +67,8 @@ int MSDecode(const char* input, const char* output, unsigned char is_gz){
 
   FILE* fp = fopen(input, "rb");
   if(!fp){
-    return 1;
+    fprintf(stderr, "Error: Could not open file\n");
+    return EXIT_FAILURE;
   }
 
   fseek(fp, 0, SEEK_END);
@@ -88,6 +89,8 @@ int MSDecode(const char* input, const char* output, unsigned char is_gz){
   sz_data += sizeof(MSOptions);
   if(options.scans_only) {
     //metadata is required to reconstruct file
+    fprintf(stderr, "Error: Invalid data or invalid options structure for mzXML or invalid file format\n");
+    fclose(fp);
     return EXIT_FAILURE;
   }
 
@@ -235,7 +238,8 @@ int MZMLDecode(const char* input, const char* output, unsigned char is_gz){
   XMLDocument doc;
   FILE* fp = fopen(input, "rb");
   if(!fp){
-    return 1;
+    fprintf(stderr, "Error: Could not open file\n");
+    return EXIT_FAILURE;
   }
 
   uint64_t xml_offset = 0;
@@ -283,6 +287,8 @@ int MZMLDecode(const char* input, const char* output, unsigned char is_gz){
   MSOptions options;
   memcpy(&options, raw_data, sizeof(MSOptions));
   if(options.scans_only) {
+    fprintf(stderr, "Error: Invalid data or invalid options structure for mzML or invalid file format\n");
+    fclose(fp);
     //metadata is required to reconstruct file
     return EXIT_FAILURE;
   }

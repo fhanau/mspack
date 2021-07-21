@@ -1,5 +1,5 @@
-CXX = g++-11
-CXXFLAGS=-std=gnu++11 -W -Wall -Wextra -Wno-address-of-packed-member -Wno-strict-aliasing -Wno-array-bounds -g -O3 -DDEBUG
+CXX = g++
+CXXFLAGS=-std=gnu++11 -W -Wall -Wextra -Wno-address-of-packed-member -Wno-strict-aliasing -Wno-array-bounds -Wno-unknown-warning-option -Wno-format -Wno-unknown-pragmas -Wno-unused-private-field -g -O3 -DDEBUG
 
 ../mspredict: main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o
 	$(CXX) $(CXXFLAGS) main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o -o ../mspredict
