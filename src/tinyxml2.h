@@ -41,6 +41,7 @@ distribution.
 #   include <cstring>
 #endif
 #include <stdint.h>
+#include"SHA1.h"
 
 /*
    TODO: intern strings instead of allocation.
@@ -1275,6 +1276,7 @@ public:
         return this;
     }
     virtual bool Accept( XMLVisitor* visitor ) const;
+    bool SHA_Accept(XMLPrinter* visitor, bool is_mzml) const;
 
     /** Given an attribute name, Attribute() returns the value
     	for the attribute of that name, or null if none
@@ -1820,7 +1822,7 @@ public:
     */
     void Print( XMLPrinter* streamer=0 ) const;
     virtual bool Accept( XMLVisitor* visitor ) const;
-
+    bool SHA_Accept(XMLPrinter* visitor, bool is_mzml) const;
     /**
     	Create a new Element associated with
     	this Document. The memory for the Element
@@ -2315,6 +2317,30 @@ public:
 		_firstElement = resetToFirstElement;
     }
 
+    void enableSHA() {
+      _calculate_sha1 = true;
+    }
+
+    void WriteSHA1Sum(bool is_mzml) {
+      if (is_mzml) {
+        Write("<fileChecksum>");
+      }
+      else {
+        Write("<sha1>", 6);
+      }
+      sha1sum.Final();
+      char hashsum[41] = {0};
+      sha1sum.ReportHash(hashsum, CSHA1::REPORT_TYPE::REPORT_HEX_SHORT);
+      fprintf(stderr, "Calculated SHA1 hash: %s\n", hashsum);
+      Write(hashsum, 40);
+      if (is_mzml) {
+        Write("</fileChecksum>");
+      }
+      else {
+        Write("</sha1>", 7);
+      }
+    }
+
 protected:
 	virtual bool CompactMode( const XMLElement& )	{ return _compactMode; }
 
@@ -2340,6 +2366,8 @@ private:
     int _textDepth;
     bool _processEntities;
 	bool _compactMode;
+    CSHA1 sha1sum;
+    bool _calculate_sha1;
 
     enum {
         ENTITY_RANGE = 64,

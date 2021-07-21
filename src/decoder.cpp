@@ -202,6 +202,24 @@ int MSDecode(const char* input, const char* output, unsigned char is_gz){
     scan = scan->NextSiblingElement("scan");
   }
 
+  XMLElement* sha1 = doc.RootElement()->FirstChildElement("sha1");
+  if (sha1) {
+    fprintf(stderr, "Found SHA1 element\n");
+    doc.DeleteNode(sha1);
+    //Use our own accept function to efficiently update SHA1 checksum
+    FILE* out = fopen(output, "wb");
+    if(!out) {
+      fprintf(stderr, "Error while saving file\n");
+      return EXIT_FAILURE;
+    }
+    XMLPrinter printIO(out, XML_DEBUG == 0);
+    doc.SHA_Accept(&printIO, false);
+    fclose(out);
+    //Delete intermediate file
+    remove(input);
+    return 0;
+  }
+
   error = doc.SaveFile(output, XML_DEBUG == 0);
   if(error != XML_SUCCESS){
     fprintf(stderr, "Error while saving file\n");
@@ -321,11 +339,30 @@ int MZMLDecode(const char* input, const char* output, unsigned char is_gz){
     }
   }
 
+  free(raw_data);
+
+  //mzML sha1 code here, just like mzXML code
+  XMLElement* sha1 = doc.RootElement()->FirstChildElement("fileChecksum");
+  if (sha1) {
+    fprintf(stderr, "Found SHA1 element\n");
+    doc.DeleteNode(sha1);
+    //Use our own accept function to efficiently update SHA1 checksum
+    FILE* out = fopen(output, "wb");
+    if(!out) {
+      fprintf(stderr, "Error while saving file\n");
+      return EXIT_FAILURE;
+    }
+    XMLPrinter printIO(out, XML_DEBUG == 0);
+    doc.SHA_Accept(&printIO, true);
+    fclose(out);
+    //Delete intermediate file
+    remove(input);
+    return 0;
+  }
   if(doc.SaveFile(output, XML_DEBUG == 0) != XML_SUCCESS){
     fprintf(stderr, "Error while saving file\n");
     return EXIT_FAILURE;
   }
-  free(raw_data);
   //Delete intermediate file
   remove(input);
   return 1;

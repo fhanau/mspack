@@ -1,8 +1,8 @@
 CXX = g++
 CXXFLAGS=-std=gnu++11 -W -Wall -Wextra -Wno-address-of-packed-member -Wno-strict-aliasing -Wno-array-bounds -Wno-unknown-warning-option -Wno-format -Wno-unknown-pragmas -Wno-unused-private-field -g -O3 -DDEBUG
 
-../mspredict: main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o
-	$(CXX) $(CXXFLAGS) main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o -o ../mspredict
+../mspredict: main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o SHA1.o
+	$(CXX) $(CXXFLAGS) main.o encoder.o decoder.o msprint.o compare.o tinyxml2.o SHA1.o -o ../mspredict
 
 main.o: main.cpp mspredict.h base64.h utils.h head.h lossy.h
 	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
@@ -21,6 +21,9 @@ msprint.o: msprint.cpp head.h
 
 compare.o: compare.cpp head.h
 	$(CXX) $(CXXFLAGS) -c compare.cpp -o compare.o
+
+SHA1.o: SHA1.cpp SHA1.h
+	$(CXX) $(CXXFLAGS) -c SHA1.cpp -o SHA1.o
 
 clean:
 	rm *.o ../mspredict

@@ -46,7 +46,7 @@ The implementation can only use raw mz and intensity arrays. If the arrays are c
 The mzXML implementation does not support all features as the format has been superseded by mzML. mzXML is limited to 32-bit files and does not support the block-based I/O feature.
 
 ### Licenses and Acknowledgements
-mspredict is available under the Apache License. It uses the tinyxml2 library by Lee Thomason and base64 by William Sherif, consult the source code for license information of these libraries. The mspredict XML parsing code is partially based on the parsing code of [Masscomp](https://github.com/iochoa/MassComp) by Ruochen Yang, Xi Chen, and Idoia Ochoa.
+mspredict is available under the Apache License. It uses the tinyxml2 library by Lee Thomason, SHA1 by Dominik Reichl and base64 by William Sherif. Consult the source code for license information of these libraries. The mspredict XML parsing code is partially based on the parsing code of [Masscomp](https://github.com/iochoa/MassComp) by Ruochen Yang, Xi Chen, and Idoia Ochoa.
 
 ### Authors
 Felix Hanau and Idoia Ochoa, University of Illinois at Urbana-Champaign

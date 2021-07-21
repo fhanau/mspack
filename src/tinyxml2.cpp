@@ -758,6 +758,37 @@ bool XMLDocument::Accept( XMLVisitor* visitor ) const
     return visitor->VisitExit( *this );
 }
 
+bool XMLDocument::SHA_Accept(XMLPrinter* visitor, bool is_mzml) const
+{
+    TIXMLASSERT( visitor );
+    //Enable SHA1 calculation
+    visitor->enableSHA();
+    if ( visitor->VisitEnter( *this ) ) {
+      //Should work well as long as we have one mzML/mzXML object.
+      const XMLNode* elem = FirstChild();
+      while (elem) {
+        if (elem->ToElement() == 0) {
+          //Not an element, just write it
+          if(!elem->Accept(visitor)) {
+            break;
+          }
+          elem = elem->NextSibling();
+        }
+        else {
+          const XMLNode* next = elem->NextSibling();
+          if (!next) {
+            elem->ToElement()->SHA_Accept(visitor, is_mzml);
+            break;
+          }
+          if(!elem->ToElement()->Accept(visitor)) {
+            break;
+          }
+          elem = next;
+        }
+      }
+    }
+    return visitor->VisitExit( *this );
+}
 
 // --------- XMLNode ----------- //
 
@@ -2079,6 +2110,25 @@ bool XMLElement::Accept( XMLVisitor* visitor ) const
     return visitor->VisitExit( *this );
 }
 
+//Added functionality to efficiently compute the SHA1 sum and add the <sha1>/<fileChecksum> tag.
+bool XMLElement::SHA_Accept(XMLPrinter* visitor, bool is_mzml) const
+{
+    //We need to do things properly in that we avoid including the closing tag in the sha sum, thus do things from the root element.
+    TIXMLASSERT( visitor );
+    //Enable SHA1 calculation
+    visitor->enableSHA();
+    if ( visitor->VisitEnter( *this, _rootAttribute ) ) {
+        for ( const XMLNode* node=FirstChild(); node; node=node->NextSibling() ) {
+            if ( !node->Accept( visitor ) ) {
+                break;
+            }
+        }
+    }
+
+    //Write SHA sum, then exit
+    visitor->WriteSHA1Sum(is_mzml);
+    return visitor->VisitExit( *this );
+}
 
 // --------- XMLDocument ----------- //
 
@@ -2563,7 +2613,10 @@ void XMLPrinter::Print( const char* format, ... )
 void XMLPrinter::Write( const char* data, size_t size )
 {
     if ( _fp ) {
-        fwrite ( data , sizeof(char), size, _fp);
+        fwrite( data , sizeof(char), size, _fp);
+        if (_calculate_sha1) {
+          sha1sum.Update((const unsigned char*)data, size);
+        }
     }
     else {
         char* p = _buffer.PushArr( static_cast<int>(size) ) - 1;   // back up over the null terminator.
@@ -2577,6 +2630,9 @@ void XMLPrinter::Putc( char ch )
 {
     if ( _fp ) {
         fputc ( ch, _fp);
+        if (_calculate_sha1) {
+          sha1sum.Update((const unsigned char*)&ch, 1);
+        }
     }
     else {
         char* p = _buffer.PushArr( sizeof(char) ) - 1;   // back up over the null terminator.
