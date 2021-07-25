@@ -1,5 +1,5 @@
-#ifndef MSPREDICT_LOSSY_H
-#define MSPREDICT_LOSSY_H
+#ifndef MSPACK_LOSSY_H
+#define MSPACK_LOSSY_H
 
 #include <tuple>
 #include <cmath>

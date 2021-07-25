@@ -1,5 +1,5 @@
-#ifndef MSPREDICT_DECODER_H
-#define MSPREDICT_DECODER_H
+#ifndef MSPACK_DECODER_H
+#define MSPACK_DECODER_H
 
 static uint32_t assemble_uint4(unsigned char* base, uint64_t step) {
   uint32_t val = base[0];

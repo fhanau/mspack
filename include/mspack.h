@@ -1,5 +1,5 @@
-#ifndef MSPREDICT_H
-#define MSPREDICT_H
+#ifndef MSPACK_H
+#define MSPACK_H
 
 #include <cstdlib>
 #include <vector>

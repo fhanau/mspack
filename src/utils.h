@@ -1,5 +1,5 @@
-#ifndef MSPREDICT_UTIL_H
-#define MSPREDICT_UTIL_H
+#ifndef MSPACK_UTIL_H
+#define MSPACK_UTIL_H
 
 #include<algorithm>
 #include "head.h"
@@ -36,9 +36,9 @@ uint32_t bucket_idx(F prev_float) {
 }
 
 #ifdef __GNUC__
-#define mspredict_ntohll __builtin_bswap64
+#define mspack_ntohll __builtin_bswap64
 #else
-uint64_t mspredict_ntohll (uint64_t* in64) {
+uint64_t mspack_ntohll (uint64_t* in64) {
   uint8_t* in = (uint8_t*)in64;
   uint64_t out = 0;
   out += in[0]; out <<= 8;

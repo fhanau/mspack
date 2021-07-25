@@ -1,5 +1,5 @@
-#ifndef MSPREDICT_H
-#define MSPREDICT_H
+#ifndef MSPACK_H
+#define MSPACK_H
 
 #include <vector>
 #include "utils.h"
@@ -163,8 +163,10 @@ void process_int_bucket(FA** mzBucketData, FM** intBucketData, size_t bucket_ele
       false, offset, lossy_mode, lossy_error);
 }
 
+//TODO: Clean up these APIs and move them to a new header.
+#if 0
 template <typename F, typename U>
-void mspredict_mz_seq(F** bucketData, size_t* bucket_elements_scan,
+void mspack_mz_seq(F** bucketData, size_t* bucket_elements_scan,
   size_t bucket_elements, std::vector<std::vector<unsigned char> >& main_output, uint64_t& all_integer_elements,
   unsigned offset, LossyMode lossy_mode, double lossy_error) {
   process_generic_seq<F, U>(bucketData, bucket_elements_scan,
@@ -173,7 +175,7 @@ void mspredict_mz_seq(F** bucketData, size_t* bucket_elements_scan,
 }
 
 template <typename F, typename U>
-void mspredict_int_seq(F** bucketData, size_t bucket_elements_scan[],
+void mspack_int_seq(F** bucketData, size_t bucket_elements_scan[],
   size_t bucket_elements, std::vector<std::vector<unsigned char> >& main_output, uint64_t& all_integer_elements,
   unsigned offset, LossyMode lossy_mode, double lossy_error) {
   process_generic_seq<F, U>(bucketData, bucket_elements_scan,
@@ -186,7 +188,7 @@ void mspredict_int_seq(F** bucketData, size_t bucket_elements_scan[],
 //Move options struct and LossyMode struct here
 
 template <typename F, typename U, typename F2, typename U2>
-int mspredict_both_bucket(F** mzBucketData, F2** intBucketData, size_t* bucket_elements_scan,
+int mspack_both_bucket(F** mzBucketData, F2** intBucketData, size_t* bucket_elements_scan,
   size_t bucket_elements, unsigned char** out, size_t* out_size,
   LossyMode mz_lossy_mode, double mz_lossy_error, LossyMode int_lossy_mode, double int_lossy_error) {
   std::vector<std::vector<unsigned char>> main_output(8 + sizeof(F) + sizeof(F2));
@@ -216,7 +218,7 @@ int mspredict_both_bucket(F** mzBucketData, F2** intBucketData, size_t* bucket_e
 }
 
 template <typename F, typename U>
-int mspredict_generic_seq(F** bucketData, size_t* bucket_elements_scan,
+int mspack_generic_seq(F** bucketData, size_t* bucket_elements_scan,
   size_t bucket_elements, unsigned char is_mz, unsigned char** out, size_t* out_size,
   LossyMode lossy_mode, double lossy_error) {
   std::vector<std::vector<unsigned char>> main_output(sizeof(F));
@@ -243,19 +245,20 @@ int mspredict_generic_seq(F** bucketData, size_t* bucket_elements_scan,
 }
 
 template <typename F, typename U>
-int mspredict_mz_seq(F** bucketData, size_t* bucket_elements_scan,
+int mspack_mz_seq(F** bucketData, size_t* bucket_elements_scan,
   size_t bucket_elements, unsigned char** out, size_t* out_size,
   LossyMode lossy_mode, double lossy_error) {
-  return mspredict_generic_seq<F, U>(bucketData, bucket_elements_scan,
+  return mspack_generic_seq<F, U>(bucketData, bucket_elements_scan,
   bucket_elements, out, out_size, true, lossy_mode, lossy_error);
 }
 
 template <typename F, typename U>
-int mspredict_int_seq(F** bucketData, size_t* bucket_elements_scan,
+int mspack_int_seq(F** bucketData, size_t* bucket_elements_scan,
   size_t bucket_elements, unsigned char** out, size_t* out_size,
   LossyMode lossy_mode, double lossy_error) {
-  return mspredict_generic_seq<F, U>(bucketData, bucket_elements_scan,
+  return mspack_generic_seq<F, U>(bucketData, bucket_elements_scan,
     bucket_elements, out, out_size, false, lossy_mode, lossy_error);
 }
 
+#endif
 #endif

@@ -3,9 +3,8 @@
 #include <sys/stat.h>
 #include "encoder.h"
 #include "head.h"
-#include "mspredict.h"
 
-typedef enum mspredict_mode {
+typedef enum mspack_mode {
   encodeMZML,
   decodeMZML,
   encodeMZXML,
@@ -13,11 +12,11 @@ typedef enum mspredict_mode {
   printMZXML,
   cmpMZXML,
   invalid
-} mspredict_mode;
+} mspack_mode;
 
 void help(const char* prog){
   fprintf(stderr,
-    "mspredict – mass spectrometry compressor\n"
+    "mspack – mass spectrometry compressor\n"
     "Usage: %s <command> [Options] input output\n"
     "Commands:\n"
     " --mzmle  Compress MZML file\n"
@@ -48,7 +47,7 @@ void help(const char* prog){
 }
 
 int main(int argc,char* argv[]) {
-  mspredict_mode mode = invalid;
+  mspack_mode mode = invalid;
   MSOptions options;
   options.mz_lossy_mode = lossless;
   options.mz_lossy_error = 0.0;

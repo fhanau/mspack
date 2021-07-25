@@ -3,7 +3,7 @@
 #include "base64.h"
 #include "encoder.h"
 #include "head.h"
-#include "mspredict.h"
+#include "mspack.h"
 
 int verify_loss(MSOptions& options, int mz_bit_depth, int int_bit_depth) {
   if (options.mz_lossy_mode == fixed_ae && (mz_bit_depth == 4 || options.mz_lossy_error < LOSSY_FIXED_PO2_CUTOFF)) {
@@ -192,7 +192,7 @@ int MZMLEncode(const char* input, const char* output, MSOptions& options, unsign
   //Support both indexedML and non-indexedML files, although we cannot maintain the indicies at this time.
   XMLElement* spectrumList = mzML->FirstChildElement("mzML");
   if(spectrumList){
-    fprintf(stderr, "warning: mspredict currently has limited support for indexedML. Due to whitespace issues, processed files may have invalid indexedML indicies.\n");
+    fprintf(stderr, "warning: mspack currently has limited support for indexedML. Due to whitespace issues, processed files may have invalid indexedML indicies.\n");
     spectrumList = spectrumList->FirstChildElement("run")->FirstChildElement("spectrumList");
   }
   else {
@@ -832,8 +832,8 @@ for(int i = 0; i < scanCount; i++)
       memcpy(&tmp2, bin + (2 * j + 1) * value_size, value_size);
 
       if (value_size == 8) {
-        tmp = mspredict_ntohll(tmp);
-        tmp2 = mspredict_ntohll(tmp2);
+        tmp = mspack_ntohll(tmp);
+        tmp2 = mspack_ntohll(tmp2);
       }
       else {
         tmp = ntohl(tmp);
