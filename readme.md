@@ -37,7 +37,7 @@ The examples directory contains a test file which can be compressed using the fo
 ```./mspack --mzmld BSA.bsc BSA-decoded.mzml```
 
 ## Caveats
-Due to the XML library we use, whitespace is not preserved in the decoded file. While the decoded file will have the same data as the original file, it will have different whitespace and therefore a different checksum. This can also cause warnings in mzml software if the indexedML format is used as indexing information becomes incorrect.
+Due to the XML library we use, whitespace is not preserved in the decoded file, although this does not cause a functional difference for the decoded file as XML is invariant to the addition or removal of whitespace. SHA1 checksum tags are recalculated when needed.
 
 The current implementation depends on the mz values being increasing. This is sometimes not the case if a third data point is present, i.e. ion mobility in addition to mz and intensity.
 
