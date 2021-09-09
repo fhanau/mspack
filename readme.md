@@ -32,7 +32,7 @@ The examples directory contains a test file which can be compressed using the fo
 ### Encode file using bsc backend
 ```./mspack --mzmle examples/BSA1.mzml BSA.bsc```
 ### Encode lossily using default error
-```./mspack --mzmle --mz-fixed-abs --int-log --examples/BSA1.mzml BSA-lossy.mgz```
+```./mspack --mzmle --mz-fixed-abs --int-log examples/BSA1.mzml BSA-lossy.mgz```
 ### Decode
 ```./mspack --mzmld BSA.bsc BSA-decoded.mzml```
 
