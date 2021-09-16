@@ -46,6 +46,7 @@ void help(const char* prog){
   );
 }
 
+/* Comment added for COMS4156, unrelated to this program */
 int main(int argc,char* argv[]) {
   mspack_mode mode = invalid;
   MSOptions options;
